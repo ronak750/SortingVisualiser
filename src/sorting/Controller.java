@@ -35,22 +35,16 @@ public class Controller extends javax.swing.JFrame {
             secondary_color=Color.magenta,
             final_color=Color.blue,
             temp_color=Color.green;
-    int delay=100;
+    int delay=50;
     boolean sorted=false;
     Graphics graphics;
     
     public Controller() {
         initComponents();
-               setSize(x_window,y_window);
+        setSize(x_window,y_window);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("Visulaisation of Soritng algorithms");
-        for(int i=0;i<arraySize;i++)
-        {
-            array[i]=(int)(Math.random()*1000)%max_height+5;
-//            array[i]=arraySize-i+1;
-//            array[i]=i+1;
-        }
-        printArray();    
+        generateArray(); 
     }
 
     
@@ -58,16 +52,20 @@ public class Controller extends javax.swing.JFrame {
     
     public void paint(Graphics g)
     {
-        graphics=g;
+        graphics=this.getGraphics();
+        System.out.println("a");
         if(sorted)
             return;
-        super.paint(g);
+//        for(int i=0;i<arraySize;i++)
+//            resetRectangle(i);
+            super.paint(g);
         try {
-            drawArray(g);
+            drawArray(graphics);
 //            bubbleSort(g);
 //            insertionSort(g);
 //            mergeSort(g);
-            quickSort(g);
+//            quickSort(g);
+//            heapSort(g);
         } catch (InterruptedException ex) {
             System.out.println(ex);
         }     
@@ -88,24 +86,31 @@ public class Controller extends javax.swing.JFrame {
 
     void bubbleSort(Graphics g) throws InterruptedException
     {
+        graphics=this.graphics;
         System.out.print("bubble sort");
         for(int i=0;i<arraySize;i++)
         {
             for(int j=0;j<arraySize-i-1;j++)
             {
-                drawRectangle(j,highlighted_color);
-                drawRectangle(j+1,secondary_color);                
-                TimeUnit.MILLISECONDS.sleep(delay/2);          
+//                drawRectangle(j,highlighted_color);
+//                drawRectangle(j+1,secondary_color);                
+//                TimeUnit.MILLISECONDS.sleep(delay);          
                 if(array[j]>array[j+1])
                 {
                     swap(j,j+1,g);
-                    TimeUnit.MILLISECONDS.sleep(delay/2);
+                    drawRectangle(j,highlighted_color);
+                    drawRectangle(j+1,secondary_color); 
                 }             
-//                else {
+                else {
+                    drawRectangle(j,highlighted_color);
+                    drawRectangle(j+1,temp_color);
+
+                }
+                    TimeUnit.MILLISECONDS.sleep(delay);
                     drawRectangle(j,initial_color);
                     drawRectangle(j+1,initial_color);
-//                }
-            }            
+            }       
+            
             drawRectangle(arraySize-i-1,final_color);
         }
         sorted=true;
@@ -118,8 +123,8 @@ public class Controller extends javax.swing.JFrame {
         int temp=array[k];
         array[k]=array[j];
         array[j]=temp;
-        drawRectangle(j,secondary_color);
-        drawRectangle(k,highlighted_color);
+//        drawRectangle(j,secondary_color);
+//        drawRectangle(k,highlighted_color);
     }
     
     
@@ -297,7 +302,7 @@ public class Controller extends javax.swing.JFrame {
             if(visited[low]==0)
             {
                 reDraw(low,final_color);
-                Thread.sleep(delay/2);
+//                Thread.sleep(delay);
                 visited[low]=1;
             }
         }
@@ -319,7 +324,7 @@ public class Controller extends javax.swing.JFrame {
                 // swap arr[i] and arr[j] 
                 drawRectangle(i,secondary_color);
                 drawRectangle(j,secondary_color);
-                Thread.sleep(delay/2);
+                Thread.sleep(delay);
                 int temp = array[i]; 
                 array[i] = array[j]; 
                 array[j] = temp; 
@@ -329,7 +334,7 @@ public class Controller extends javax.swing.JFrame {
         }  
         // swap arr[i+1] and arr[high] (or pivot) 
         drawRectangle(i+1,temp_color);
-        Thread.sleep(delay/2);
+        Thread.sleep(delay);
         int temp = array[i+1]; 
         array[i+1] = array[high]; 
         array[high] = temp; 
@@ -338,6 +343,81 @@ public class Controller extends javax.swing.JFrame {
         visited[i+1]=1;
         return i+1; 
     }
+    void heapSort(Graphics g) throws InterruptedException
+    {
+        System.out.println("Heap Sort");
+        HSort();
+        sorted=true;
+        printArray();
+    }
+    public void HSort() throws InterruptedException 
+    { 
+        int n = arraySize; 
+  
+        // Build heap (rearrange array) 
+        for (int i = n / 2 - 1; i >= 0; i--) 
+            heapify( n, i); 
+  
+        // One by one extract an element from heap 
+        for (int i=n-1; i>0; i--) 
+        { 
+            // Move current root to end 
+//            reDraw(0,highlighted_color);
+//            Thread.sleep(delay/2);
+            int temp = array[0]; 
+            array[0] = array[i]; 
+            array[i] = temp; 
+            
+            reDraw(i,final_color);
+//            Thread.sleep(delay/2);
+            // call max heapify on the reduced heap 
+            heapify( i, 0); 
+        } 
+        reDraw(0,final_color);
+    } 
+  
+    // To heapify a subtree rooted with node i which is 
+    // an index in arr[]. n is size of heap 
+    void heapify( int n, int i) throws InterruptedException 
+    { 
+ 
+        int largest = i; // Initialize largest as root 
+        int l = 2*i + 1; // left = 2*i + 1 
+        int r = 2*i + 2; // right = 2*i + 2 
+  
+        // If left child is larger than root 
+        if (l < n && array[l] > array[largest]) 
+            largest = l; 
+  
+        // If right child is larger than largest so far 
+        if (r < n && array[r] > array[largest]) 
+            largest = r; 
+        
+        if(largest==i)
+        {
+            reDraw(largest,secondary_color);
+            Thread.sleep(delay);
+            reDraw(i,initial_color);
+        }
+        // If largest is not root 
+
+        if (largest != i) 
+        { 
+            int swap = array[i]; 
+            array[i] = array[largest]; 
+            array[largest] = swap; 
+
+            reDraw(i,secondary_color);
+            reDraw(largest,highlighted_color);
+            Thread.sleep(delay);
+            reDraw(i,initial_color);
+            reDraw(largest,initial_color);
+            // Recursively heapify the affected sub-tree 
+            heapify( n, largest); 
+        } 
+
+    } 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -347,38 +427,194 @@ public class Controller extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jSlider1 = new javax.swing.JSlider();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
+        jLabel1.setText("jLabel1");
+
+        jButton4.setText("Reset");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Bubble Sort");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Insertion Sort");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
+        jButton3.setText("Merge Sort");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText("Heap Sort");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText("Quick Sort");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jSlider1.setMaximum(60);
+        jSlider1.setMinimum(5);
+        jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSlider1StateChanged(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        jLabel2.setText("Array Size");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jButton1)
-                .addGap(0, 984, Short.MAX_VALUE))
+                .addGap(209, 209, 209)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 938, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSlider1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addComponent(jButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
-                .addGap(0, 894, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton6)
+                .addGap(25, 25, 25)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 438, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(117, 117, 117))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+
+        for(int i=0;i<arraySize;i++)
+            resetRectangle(i);
+        sorted=false;
+        generateArray();
+        try {
+            drawArray(this.getGraphics());
+
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+        try {
+            bubbleSort(this.getGraphics());
+            // TODO add your handling code here:
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-System.exit(0);        // TODO add your handling code here:
+
+        try {
+            insertionSort(this.getGraphics());
+            // TODO add your handling code here:
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        try {
+            mergeSort(this.getGraphics());
+            // TODO add your handling code here:
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+
+        try {
+            heapSort(this.getGraphics());
+            // TODO add your handling code here:
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+     try {
+            quickSort(this.getGraphics());
+            // TODO add your handling code here:
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }         // TODO add your handling code here:
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
+        for(int i=0;i<arraySize;i++)
+            resetRectangle(i);
+        arraySize=jSlider1.getValue();
+        array=new int[arraySize];
+        width=window/arraySize;
+        jButton4.doClick();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jSlider1StateChanged
 
     /**
      * @param args the command line arguments
@@ -416,6 +652,16 @@ System.exit(0);        // TODO add your handling code here:
         });
     }
 
+    void generateArray()
+    {
+        for(int i=0;i<arraySize;i++)
+        {
+            array[i]=(int)(Math.random()*1000)%max_height+5;
+//            array[i]=arraySize-i+1;
+//            array[i]=(i+1)*2;
+        }
+        printArray();
+    }
     void printArray()
     {
         for(int i=0;i<arraySize;i++)
@@ -465,5 +711,13 @@ System.exit(0);        // TODO add your handling code here:
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JSlider jSlider1;
     // End of variables declaration//GEN-END:variables
 }
