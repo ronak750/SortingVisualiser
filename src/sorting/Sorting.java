@@ -255,9 +255,10 @@ public class Sorting extends JFrame{
         } 
     } 
     
-    int visited[]=new int[arraySize];
+    int visited[];
     void quickSort(Graphics g) throws InterruptedException
     {
+        visited=new int[arraySize];
         System.out.println("Quiick Sort");
         for(int i=0;i<arraySize;i++)
             visited[i]=0;
@@ -309,32 +310,33 @@ public class Sorting extends JFrame{
             // If current element is smaller than the pivot 
             if (array[j] < pivot) 
             { 
-                i++; 
-  
-                // swap arr[i] and arr[j] 
-                drawRectangle(i,secondary_color);
+                i++;  
+                drawRectangle(i,temp_color);
                 drawRectangle(j,secondary_color);
-                Thread.sleep(delay);
+                // swap arr[i] and arr[j] 
                 int temp = array[i]; 
                 array[i] = array[j]; 
-                array[j] = temp; 
+                array[j] = temp;  
+                Thread.sleep(delay);
                 resetAndRedraw(i);
                 resetAndRedraw(j);
             } 
+ 
         }  
-        // swap arr[i+1] and arr[high] (or pivot) 
         drawRectangle(i+1,temp_color);
         Thread.sleep(delay);
+        // swap arr[i+1] and arr[high] (or pivot) 
         int temp = array[i+1]; 
         array[i+1] = array[high]; 
         array[high] = temp; 
+        
         resetAndRedraw(high);
         reDraw(i+1,final_color);
         visited[i+1]=1;
         return i+1; 
     }
     
-        void heapSort(Graphics g) throws InterruptedException
+    void heapSort(Graphics g) throws InterruptedException
     {
         System.out.println("Heap Sort");
         HSort();
@@ -412,6 +414,11 @@ public class Sorting extends JFrame{
 //    public static void main(String[] args) {
 //        new Sorting().setVisible(true);
 //    }
+    void changeDelay(int newTime)
+    {
+        delay=newTime;
+    }
+    
     void resizeArray(int newSize)
     {
         for(int i=0;i<arraySize;i++)
