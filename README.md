@@ -3,8 +3,6 @@
 ## Purpose
 This project's purpose was to help me understand how to implement sorting algorithms and how sorting algorithms handle data in real time.
 
-This project was also featured at the Will Rogers Elementary STEM fair on February 24th, 2017
-
 ## Features
 This project features many sorts including:
 
