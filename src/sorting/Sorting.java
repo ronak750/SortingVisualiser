@@ -19,10 +19,12 @@ public class Sorting extends JFrame{
     private int arraySize=50;
     private int[] array=new int[arraySize];
     private int x_min=50,y_min=50;
-    private int x_window=1000,y_window=800;
-    private int window=700;
+    private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+     private  int x_window = (int) screenSize.getWidth()-100;
+    private int y_window = (int) screenSize.getHeight()-100;
+    private int window=x_window*85/100;
     private int width=window/arraySize,margin=2;
-    private int max_height=600;
+    private int max_height=y_window*75/100;
     private Color background_color=Color.decode("#d6d9e0");
     private Color initial_color=Color.yellow,
             highlighted_color=Color.red,

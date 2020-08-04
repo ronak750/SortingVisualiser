@@ -5,7 +5,9 @@
  */
 package sorting;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
@@ -27,7 +29,11 @@ public class Controller extends javax.swing.JFrame {
     
     public Controller() {
         initComponents();
-        setSize(x_window,y_window);
+       
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int) screenSize.getWidth();
+        int height = (int) screenSize.getHeight();
+        setSize(width-100,height-100); 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("Visulaisation of Soritng algorithms");
         sorting =new Sorting(this.getGraphics(),arraySize);
